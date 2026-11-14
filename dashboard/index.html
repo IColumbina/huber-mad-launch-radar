@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fjord Index | Huber-MAD Robust Peer Calibration</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body class="topo-bento-svg-darkband dlg-top-wide hdr-band">
+<div class="frame">
+  
+
+  <div class="workspace">
+    <header class="masthead">
+      <div>
+        <div class="eyebrow">HUBER-MAD-V1 &middot; AS OF <span id="as-of">...</span> &middot; FLOOR <span id="floor-pill">$50M</span></div>
+        <h1>Fjord Index | Huber-MAD Robust Peer Calibration</h1>
+      </div>
+      <nav class="tabs">
+    <button type="button" class="tab active" data-tab="board">Ranked Board</button>
+    <button type="button" class="tab" data-tab="sandbox">Model Sandbox</button>
+    <button type="button" class="tab" data-tab="priors">Sector Comps</button>
+    <button type="button" class="tab" data-tab="excluded">Audit Log</button>
+  </nav>
+    </header>
+
+    <section class="formula-bar">
+      <code id="formula-text">Loading model...</code>
+      <span class="parity-pill" id="parity-badge">Verifying...</span>
+    </section>
+
+    <section class="bento-top">
+      <div class="kpi-grid" id="kpi-grid"></div>
+      <div class="chart-card"><div class="kpi-label">Top Pre-Token Categories by Modeled FDV</div><svg id="radar-svg" viewBox="0 0 420 112" width="100%" height="104" role="img" aria-label="Sector summary chart"></svg></div>
+    </section>
+
+    <main id="board" tabindex="-1">
+      <section id="view-board" class="view active ">
+        <div class="toolbar">
+          
+    <input id="q" type="search" placeholder="Search name, slug, chain..." aria-label="Search">
+    
+    <div class="tier-pills" role="group" aria-label="Tier filter">
+      <button type="button" class="pill active" data-tier="all">All</button>
+      <button type="button" class="pill" data-tier="watchlist">Watchlist</button>
+      
+      <button type="button" class="pill" data-tier="early">Early &lt;$50M</button>
+    </div>
+  
+    <select id="cat" aria-label="Category filter"><option value="all">All categories</option></select>
+    <select id="chain" aria-label="Chain filter"><option value="all">All chains</option></select>
+    <select id="sort" aria-label="Sort order">
+      <option value="rank">Rank (Modeled FDV)</option>
+      <option value="tvl">TVL Descending</option>
+      <option value="airdrop">Est. Yield / $1k</option>
+      <option value="growth">7d Flow Momentum</option>
+      <option value="mult">Sector Multiple</option>
+    </select>
+  
+          <div class="filter-status" id="filter-status"></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Protocol</th>
+                <th>Tier</th>
+                <th class="num">TVL</th>
+                <th class="num">7d Flow</th>
+                <th class="num">Prior</th>
+                <th class="num">Implied FDV &amp; Band</th>
+                <th class="num">Est. / $1k</th>
+                <th>Plan</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="view-sandbox" class="view">
+        <div class="panel-grid">
+          <div class="card">
+            <h2>Live Parameter Sensitivity</h2>
+            <div class="sliders">
+              <label>Shrinkage k <span id="sv-k">4</span><input id="sl-k" type="range" min="1" max="12" step="1" value="4"></label>
+              <label>Scale Exponent <span id="sv-sc">0.12</span><input id="sl-sc" type="range" min="0" max="0.25" step="0.01" value="0.12"></label>
+              <label>7d Flow Weight <span id="sv-gw">0.29</span><input id="sl-gw" type="range" min="0" max="0.60" step="0.02" value="0.29"></label>
+              <label>Cohort Sleeve <span id="sv-slv">1</span><input id="sl-slv" type="range" min="0.25" max="1.00" step="0.05" value="1"></label>
+            </div>
+            <button type="button" class="btn-primary mt8" id="btn-reset">Reset</button>
+          </div>
+          <div class="card">
+            <h2>Sandbox Top 10 Preview</h2>
+            <table><thead><tr><th>New #</th><th>Orig</th><th>Protocol</th><th class="num">FDV</th><th class="num">/ $1k</th></tr></thead><tbody id="sb-tbody"></tbody></table>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-priors" class="view">
+        <div class="panel-grid">
+          <div class="card"><h2>Category Priors</h2><table><thead><tr><th>Category</th><th class="num">n</th><th class="num">Raw</th><th class="num">Prior</th><th class="num">Band</th></tr></thead><tbody id="priors-tbody"></tbody></table></div>
+          <div class="card"><h2>Live Comparables (<span id="live-count">0</span>)</h2><table><thead><tr><th>Token</th><th>Sector</th><th class="num">TVL</th><th class="num">MCap</th><th class="num">Ratio</th></tr></thead><tbody id="live-tbody"></tbody></table></div>
+        </div>
+      </section>
+
+      <section id="view-excluded" class="view">
+        <div class="card"><h2>Rule-Based Exclusions</h2><table><thead><tr><th>Protocol</th><th>Sector</th><th class="num">TVL</th><th>Rule Triggered</th></tr></thead><tbody id="excl-tbody"></tbody></table></div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<dialog id="detail-dialog" aria-labelledby="dlg-title">
+  <div class="dlg-head">
+    <div>
+      <div class="eyebrow" id="dlg-meta"></div>
+      <h2 id="dlg-title">Detail</h2>
+    </div>
+    <button type="button" class="close-btn" data-close-detail="true">Close</button>
+  </div>
+  <div class="dlg-body" data-detail-panel="true">
+    <div id="dlg-left"></div>
+    <div id="dlg-right"></div>
+  </div>
+</dialog>
+
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
